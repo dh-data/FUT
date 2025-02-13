@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+// import '../src/assets/styles/globals.css'
 import { ClerkProvider } from '@clerk/clerk-react'
 
 // TODO: Move to .env.local

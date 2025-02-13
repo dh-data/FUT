@@ -5,9 +5,12 @@ import { twMerge } from "tailwind-merge"
 
 const config: Config = {
   darkMode: "class",
-  content: ["src/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"], // 确保路径匹配你的项目结构
+  content: ["./src/**/*.{ts,tsx}"], // 确保路径匹配你的项目结构
   theme: {
     extend: {
+      // spacing: {
+      //   '20': '20px',
+      // },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

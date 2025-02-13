@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button"
-
+import SidebarComponent from "./Sidebar"
+import ChatInterface from "./ChatInterface"
+import WaitChat from "./WaitChat"
 export default function Home() {
   return (
-   <>
-    <div>登录完毕</div>
-    <Button variant="outline">Button111</Button>
-   </>
+   <div  className="flex flex-row w-screen  h-screen">
+    <SidebarComponent />
+    {/* <ChatInterface /> */}
+    <WaitChat/>
+   </div>
+
   )
 }
