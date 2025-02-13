@@ -62,4 +62,17 @@ export class ChatService {
   async enableChat(chatId: string): Promise<Chat> {
     return this.updateChatStatus(chatId, ChatStatus.ENABLED);
   }
+
+  // 获取用户的会话列表
+  async getUserChats(userId: string): Promise<Chat[]> {
+    return this.chatRepository.find({
+      where: {
+        userId,
+        status: ChatStatus.ENABLED, // 只返回启用状态的会话
+      },
+      order: {
+        createdAt: 'DESC', // 按创建时间倒序排列
+      },
+    });
+  }
 }

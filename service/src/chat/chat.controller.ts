@@ -1,4 +1,4 @@
-import { Controller, Post, Headers } from '@nestjs/common';
+import { Controller, Post, Headers, Get } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Chat } from './chat.entity';
 
@@ -6,9 +6,13 @@ import { Chat } from './chat.entity';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  @Get()
+  getUserChats(@Headers('authorization') authorization: string): Promise<Chat[]> {
+    // TODO: 从 authorization 中获取 userId
+    return this.chatService.getUserChats('user_13580597747');
+  }
   @Post()
   createChat(@Headers('authorization') authorization: string): Promise<Chat> {
-    // TODO: 从 authorization 中获取 userId
     return this.chatService.createChat('user_13580597747');
   }
 }
