@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat, Message, ChatStatus } from './chat.entity';
+import { OpenAI } from 'openai';
 
 @Injectable()
 export class ChatService {
@@ -11,14 +12,62 @@ export class ChatService {
     private chatRepository: Repository<Chat>,
   ) {}
 
-  async createChat(userId: string): Promise<Chat> {
+  async createChat(userId: string, title?: string): Promise<Chat> {
     return this.chatRepository.save(Object.assign(new Chat(), {
         id: uuidv4(),
         userId,
+        title: title || null,
         status: ChatStatus.ENABLED,
         createdAt: new Date(),
         messages: [],
       }));
+  }
+
+  async getChatResponse(userId: string, id: string, prompt?: string): Promise<any> {
+    if (!id) {
+      throw new Error('Chat ID is required');
+    }
+
+    const existingChat = await this.chatRepository.findOne({ 
+      where: { 
+        id,
+        userId
+      } 
+    });
+
+    if (!existingChat) {
+      throw new Error('Chat not found');
+    }
+
+    const openai = new OpenAI({
+      baseURL: 'https://integrate.api.nvidia.com/v1',
+      apiKey: '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'
+    });
+
+    const msgs: any[] = []
+    if(prompt) {
+      msgs.push({
+        role: 'user',
+        content: prompt
+      });
+    }
+    existingChat.messages.forEach(msg => {
+      msgs.push({
+        role: msg.role,
+        content: msg.content
+      });
+    });
+
+    const response = await openai.chat.completions.create({
+      model: "deepseek-ai/deepseek-r1",
+      temperature: 0.6,
+      top_p: 0.7,
+      max_tokens: 4096,
+      stream: true,
+      messages: msgs
+    });
+    // TODO: 返回流式响应
+    return response;
   }
 
   async addMessage(chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
@@ -64,15 +113,29 @@ export class ChatService {
   }
 
   // 获取用户的会话列表
-  async getUserChats(userId: string): Promise<Chat[]> {
-    return this.chatRepository.find({
+  async getUserChats(userId: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
+    const chats = await this.chatRepository.find({
       where: {
         userId,
-        status: ChatStatus.ENABLED, // 只返回启用状态的会话
+        status: ChatStatus.ENABLED,
       },
       order: {
-        createdAt: 'DESC', // 按创建时间倒序排列
+        createdAt: 'DESC',
+      },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+        title: true,
+        messages: true,
+        // userId 字段不选择，这样就不会输出
       },
     });
+
+    // 将 createdAt 转换为毫秒时间戳
+    return chats.map(chat => ({
+      ...chat,
+      createdAt: chat.createdAt.getTime(),
+    }));
   }
 }
