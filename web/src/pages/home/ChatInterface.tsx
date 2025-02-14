@@ -8,7 +8,7 @@ import {CircleArrowUp,ArrowUp} from "lucide-react"
 // 样式
 const chatInterfaceClass="flex flex-col w-[100%] h-[100%] bg-[var(--bg-color-hover)]"
 const blockClass="pl-[24px] h-[100%] pr-[24px]"
-const contentBlockClass="h-[100%] max-w-[860px] mx-auto"
+const contentBlockClass="h-[100%] max-w-[860px] mx-auto flex flex-col justify-between pt-[20px] pb-[20px]"
 
 const chatInputClass="w-[100%] max-w-[860px]  min-h-[112px] max-h-[500px] bg-[#fff] rounded-[24px] p-[10px]"
 const textareaClass="border-0 outline-none focus:outline-none focus:ring-0 active:ring-0 active:outline-none bg-transparent"
@@ -57,7 +57,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ prompt ,children }) => {
                 {/* 信息展示 */}
                 {prompt && <div className='h-[50%] flex  justify-center items-end'>{prompt}</div>}
                 {/* 信息展示/数据展示 */}
-                <div>{children}</div>
+                <div className='overflow-hidden overflow-y-auto'>{children}</div>
                 {/* 输入框 */}
                 <div>
                     <div>
