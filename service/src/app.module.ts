@@ -10,15 +10,18 @@ import { ChatController } from './chat/chat.controller';
 import { ChatService } from './chat/chat.service';
 import { databaseConfig } from './chat/config/database.config';
 import { Chat } from './chat/chat.entity';
+import { ProfileModule } from './profile/profile.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
     TypeOrmModule.forFeature([Chat]),
-    ChatModule
+    ChatModule,
+    ProfileModule
   ],
   controllers: [AppController, ProfileController, ChatController],
-  providers: [AppService, ProfileService, ChatService],
+  providers: [AppService, ProfileService, ChatService, JwtService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

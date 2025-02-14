@@ -7,9 +7,9 @@ export interface Message {
 }
 
 export enum ChatStatus {
-  ENABLED = 'enabled',
-  DISABLED = 'disabled',
-  DELETED = 'deleted'
+  DISABLED = 0,
+  ENABLED = 1,
+  DELETED = 2
 }
 
 @Entity()
@@ -19,6 +19,9 @@ export class Chat {
 
   @Column()
   userId: string;
+
+  @Column({nullable: true})
+  title: string;
 
   @Column({
     type: 'enum',
