@@ -77,9 +77,8 @@ input,textarea {
     outline: none;
     padding: 6px;
     box-shadow: none  !important;
-    
     border-radius: 14px;
-    resize: none; 
+    /* resize: none;  */
   }
   
   /* 重置 focus 和 active 状态的样式 */
