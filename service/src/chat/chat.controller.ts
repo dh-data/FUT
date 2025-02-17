@@ -1,6 +1,7 @@
-import { Controller, Post, Headers, Get, Body } from '@nestjs/common';  
+import { Controller, Post, Headers, Get, Body, Res } from '@nestjs/common';  
 import { ChatService } from './chat.service';
 import { Chat } from './chat.entity';
+import { Response } from 'express';
 
 @Controller('chat')
 export class ChatController {
@@ -12,11 +13,24 @@ export class ChatController {
     return this.chatService.getUserChats('user_13580597747');
   }
   @Post()
-  createChat(@Headers('authorization') authorization: string, @Body() body: { title?: string, id?: string, prompt?: string }): Promise<any> {
-    if(!body.id) {
+  async createChat(@Res() response: Response, @Headers('authorization') authorization: string, @Body() body: { title?: string, id?: string, prompt?: string }): Promise<any> {
+    if (!body.id) {
       return this.chatService.createChat('user_13580597747', body.title);
     } else {
-      return this.chatService.getChatResponse('user_13580597747', body.id, body.prompt);
+      try {
+        const responseStream = await this.chatService.getChatResponse('user_13580597747', body.id, body.prompt);
+        response.setHeader('Content-Type', 'text/event-stream');
+
+        for await (const chunk of responseStream) {
+          console.log(chunk.choices[0].delta)
+          response.write(JSON.stringify(chunk.choices[0].delta));
+        }
+
+        response.end();
+      } catch (error) {
+        console.error('Stream error:', error);
+        response.status(500).json({ error: 'Stream error' });
+      }
     }
   }
 }
