@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Ellipsis } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ const ellipsisClass =
 const chatBtnClass =
   'flex items-center pl-[10px] pr-[10px] h-[44px] w-[130px] rounded-[14px] text-[16px] text-[#4d6bfe] bg-[rgba(219,234,254)] '
 const SidebarComponent = () => {
+  const navigate = useNavigate()
   //   const [data, setData] = useState([]);
 
   //   useEffect(() => {
@@ -71,6 +72,7 @@ const SidebarComponent = () => {
   const handleSelData = item => {
     console.log(item, 1)
     setSelectedId(item.id)
+    navigate(`/chat/${item.id}`)
   }
 
   // 重命名
@@ -130,6 +132,7 @@ const SidebarComponent = () => {
                 className="rounded-[12px] b"
               />
             ) : (
+              // 路由跳转
               <div
                 className={
                   item.id == selectedId

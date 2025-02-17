@@ -23,16 +23,12 @@
 //   )
 // }
 
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import Router from './router/index';
+import React from 'react'
+import Router from './router/index'
 import './index.css'
-const App: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <Router />
-    </BrowserRouter>    
-  );
-};
 
-export default App;
+const App: React.FC = () => {
+  return <Router />
+}
+
+export default App
