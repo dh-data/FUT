@@ -32,7 +32,7 @@ export const routes: RouteObject[] = [
       },
       // 动态路由
       {
-        path: ':id',
+        path: ':id?',
         element: <Chatting />
       },
       {
