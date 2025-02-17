@@ -61,7 +61,7 @@ const ChatMessage = ({ message }) => {
     console.log('路由变化：', location.pathname)
   }, [location])
   return (
-    <div className={`message ${role}`}>
+    <div className={`message ${role} max-w-[860px] mx-auto `}>
       <div className="avatar">
         {role === 'user' ? <FaUser size={20} /> : <FaRobot size={20} />}
       </div>

@@ -5,9 +5,9 @@ import { CircleArrowUp, ArrowUp } from 'lucide-react'
 // 样式
 const chatInterfaceClass =
   'flex flex-col w-[100%] h-[100%] bg-[var(--bg-color-hover)]'
-const blockClass = 'pl-[24px] h-[100%] flex flex-col'
+const blockClass = 'pl-[24px] h-[100%] pr-[24px]'
 const contentBlockClass =
-  'flex-1 overflow-hidden flex flex-col justify-between pt-[20px] pb-[20px]'
+  'h-[100%] max-w-[860px] mx-auto flex flex-col justify-between pt-[20px] pb-[20px]'
 
 const chatInputClass =
   'w-[100%] max-w-[860px]  min-h-[112px] max-h-[500px] bg-[#fff] rounded-[24px] p-[10px]'
@@ -52,39 +52,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ prompt, children }) => {
         {/* 聊天数据块 */}
         <div className={blockClass}>
           <div className={contentBlockClass}>
+            {/* 信息展示 */}
             {prompt && (
               <div className="h-[50%] flex  justify-center items-end">
                 {prompt}
               </div>
             )}
-            <div className="overflow-hidden overflow-y-auto p-[10px]">
-              {children}
-            </div>
-          </div>
-          <div className="flex justify-center mb-[50px] p-[10px]">
-            <div className={chatInputClass}>
-              <div className="textareaChat">
-                <Textarea
-                  value={inputText}
-                  onChange={e => setInputText(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  ref={inputRef}
-                  placeholder="Please send a message"
-                />
-              </div>
-              <div className="flex row justify-end items-end w-[100%] mt-[6px]">
-                <div
-                  className={
-                    inputText
-                      ? `${ArrowUpClass} bg-[#4d6bfe] cursor-pointer`
-                      : `${ArrowUpClass} bg-[#D6DEE8] cursor-no-drop`
-                  }
-                >
-                  <ArrowUp onClick={handleSend} />
+            {/* 信息展示/数据展示 */}
+            <div className="overflow-hidden overflow-y-auto">{children}</div>
+            {/* 输入框 */}
+            <div>
+              <div>
+                <div className={chatInputClass}>
+                  <div className="textareaChat">
+                    <Textarea
+                      value={inputText}
+                      onChange={e => setInputText(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      ref={inputRef}
+                      placeholder="Please send a message"
+                    />
+                  </div>
+                  <div className="flex row justify-end items-end w-[100%] mt-[6px]">
+                    <div
+                      className={
+                        inputText
+                          ? `${ArrowUpClass} bg-[#4d6bfe] cursor-pointer`
+                          : `${ArrowUpClass} bg-[#D6DEE8] cursor-no-drop`
+                      }
+                    >
+                      <ArrowUp onClick={handleSend} />
+                    </div>
+                  </div>
                 </div>
+                {/* <div>内容Ai生成/提示</div> */}
               </div>
             </div>
-            {/* <div>内容Ai生成/提示</div> */}
           </div>
         </div>
       </div>

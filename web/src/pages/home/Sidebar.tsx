@@ -38,8 +38,6 @@ const SidebarComponent = () => {
   const [isSticky, setIsSticky] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
 
-  //   const [data, setData] = useState([]);
-
   //   useEffect(() => {
   //     // 替换为你的 API 端点
   //     fetch('https://api.example.com/sidebar-data')
@@ -102,96 +100,6 @@ const SidebarComponent = () => {
           title: '标题'
         }
       ]
-    },
-    {
-      id: 31,
-      title: '标题标题标题标题标题标题标题',
-      day: 14,
-      children: [
-        {
-          id: 321,
-          title: '标题'
-        },
-        {
-          id: 322,
-          title: '标题'
-        },
-        {
-          id: 323,
-          title: '标题'
-        },
-        {
-          id: 324,
-          title: '标题'
-        },
-        {
-          id: 325,
-          title: '标题'
-        }
-      ]
-    },
-    {
-      id: 431,
-      title: '标题标题标题标题标题标题标题',
-      day: 24,
-      children: [
-        {
-          id: 4321,
-          title: '标题'
-        },
-        {
-          id: 4322,
-          title: '标题'
-        },
-        {
-          id: 4323,
-          title: '标题'
-        },
-        {
-          id: 4324,
-          title: '标题'
-        },
-        {
-          id: 4325,
-          title: '标题'
-        },
-        {
-          id: 4321,
-          title: '标题'
-        },
-        {
-          id: 5322,
-          title: '标题'
-        },
-        {
-          id: 45323,
-          title: '标题'
-        },
-        {
-          id: 45324,
-          title: '标题'
-        },
-        {
-          id: 45325,
-          title: '标题'
-        },
-        {
-          id: 45324,
-          title: '标题'
-        },
-        {
-          id: 48325,
-          title: '标题'
-        },
-        {
-          id: 48325,
-          title: '标题'
-        },
-        {
-          id: 48325,
-          title: '标题'
-        }
-      ]
     }
   ])
   // 选中的id
@@ -211,7 +119,7 @@ const SidebarComponent = () => {
   // 重命名
   const handleEditStart = (item, event) => {
     event.stopPropagation()
-    console.log(item, 2)
+    console.log(item, 2, event)
     // 设置编辑数据
     setDropdownData({ ...dropdownData, ...item })
   }
@@ -282,13 +190,13 @@ const SidebarComponent = () => {
         <DropdownMenuContent className="bg-[#fff] border-0">
           <DropdownMenuItem
             className={triggerClass}
-            onClick={() => handleEditStart(item)}
+            onClick={e => handleEditStart(item, e)}
           >
             重命名
           </DropdownMenuItem>
           <DropdownMenuItem
             className={triggerClass}
-            onClick={() => handleDeleteData(item.id)}
+            onClick={e => handleDeleteData(item.id, e)}
           >
             删除
           </DropdownMenuItem>
@@ -376,7 +284,7 @@ const SidebarComponent = () => {
                       onBlur={handleBlur}
                       onChange={e => setEditingData(e.target.value)}
                       value={dropdownData.title}
-                      className="rounded-[12px] b"
+                      className="rounded-[12px]"
                     />
                   ) : (
                     <div
