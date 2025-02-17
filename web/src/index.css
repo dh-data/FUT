@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
@@ -13,7 +13,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  --bg-color-hover:#EFF6FF
+  --bg-color-hover: #eff6ff;
 }
 
 a {
@@ -70,25 +70,31 @@ button:focus-visible {
   }
 }
 
+input,
+textarea {
+  border: none;
+  outline: none;
+  padding: 6px;
+  box-shadow: none !important;
+  border-radius: 14px;
+  /* resize: none;  */
+}
 
+/* 重置 focus 和 active 状态的样式 */
+.textareaChat textarea:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+.textareaChat textarea:active {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
 
-input,textarea {
-    border: none;
-    outline: none;
-    padding: 6px;
-    box-shadow: none  !important;
-    border-radius: 14px;
-    /* resize: none;  */
-  }
-  
-  /* 重置 focus 和 active 状态的样式 */
-  .textareaChat textarea:focus {
-    border: none;
-    outline: none;
-    box-shadow: none;
-  }
-  .textareaChat textarea:active {
-    border: none;
-    outline: none;
-    box-shadow: none;
-  }
+.sticky-header {
+  position: -webkit-sticky; /* Safari兼容 */
+  position: sticky;
+  top: 0;
+  transition: all 0.3s ease;
+}

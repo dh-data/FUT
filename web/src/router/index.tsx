@@ -25,6 +25,7 @@ export const routes: RouteObject[] = [
   {
     path: '/chat',
     element: <Home />,
+    // !TODO:浏览器中页面刷新或手动url上不起作用，导致页面空白
     children: [
       {
         path: 'empty',
