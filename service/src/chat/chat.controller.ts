@@ -49,6 +49,7 @@ export class ChatController {
       try {
         const responseStream = await this.chatService.getChatResponse(authorization, id, body.prompt);
         response.setHeader('Content-Type', 'text/event-stream');
+        response.status(200);
 
         for await (const chunk of responseStream) {
           console.log(chunk.choices[0].delta);

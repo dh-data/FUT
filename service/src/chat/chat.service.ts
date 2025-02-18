@@ -56,8 +56,8 @@ export class ChatService {
     }
 
     const openai = new OpenAI({
-      baseURL: 'https://integrate.api.nvidia.com/v1',
-      apiKey: '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'
+      baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
+      apiKey: 'faae1484-2203-4490-8719-c62e2ddeefe7'
     });
 
     const msgs: any[] = []
@@ -73,7 +73,7 @@ export class ChatService {
         content: prompt
       });
       const responseStream = await openai.chat.completions.create({
-        model: "deepseek-ai/deepseek-r1",
+        model: "ep-20250213193551-29xm2",
         temperature: 0.6,
         top_p: 0.7,
         max_tokens: 4096,
