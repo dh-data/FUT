@@ -46,28 +46,29 @@ export class ChatService {
 
     const msgs: any[] = []
     if(prompt) {
+      existingChat.messages.forEach(msg => {
+        msgs.push({
+          role: msg.role,
+          content: msg.content
+        });
+      });
       msgs.push({
         role: 'user',
         content: prompt
       });
-    }
-    existingChat.messages.forEach(msg => {
-      msgs.push({
-        role: msg.role,
-        content: msg.content
+      const responseStream = await openai.chat.completions.create({
+        model: "deepseek-ai/deepseek-r1",
+        temperature: 0.6,
+        top_p: 0.7,
+        max_tokens: 4096,
+        stream: true,
+        messages: msgs
       });
-    });
-
-    const response = await openai.chat.completions.create({
-      model: "deepseek-ai/deepseek-r1",
-      temperature: 0.6,
-      top_p: 0.7,
-      max_tokens: 4096,
-      stream: true,
-      messages: msgs
-    });
-    // TODO: 返回流式响应
-    return response;
+    
+      return responseStream; 
+    } else {
+      throw new Error('Prompt is required');
+    }
   }
 
   async addMessage(chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
