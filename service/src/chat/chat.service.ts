@@ -117,6 +117,16 @@ export class ChatService {
     return this.chatRepository.save(chat);
   }
 
+  async deleteChat(authorization: string, chatId: string): Promise<void> {
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    chat.status = ChatStatus.DELETED;
+    await this.chatRepository.save(chat);
+  }
+
   // 获取用户的会话列表
   async getUserChats(authorization: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
     const payload = this.jwtService.decode(authorization);
