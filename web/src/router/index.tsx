@@ -28,18 +28,18 @@ export const routes: RouteObject[] = [
     // !TODO:浏览器中页面刷新或手动url上不起作用，导致页面空白
     children: [
       {
-        path: 'empty',
+        path: '/chat/empty',
         element: <WaitChat />
       },
       // 动态路由
       {
-        path: ':id?',
+        path: '/chat/:id?',
         element: <Chatting />
       },
-      {
-        path: '',
-        element: <Navigate to="empty" replace />
-      },
+      // {
+      //   path: '/chat/empty',
+      //   element: <Navigate to="/chat/empty" replace />
+      // },
       {
         path: '*',
         element: <div>页面不存在</div>
