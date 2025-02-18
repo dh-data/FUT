@@ -4,18 +4,21 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat, Message, ChatStatus } from './chat.entity';
 import { OpenAI } from 'openai';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Chat)
     private chatRepository: Repository<Chat>,
+    private jwtService: JwtService
   ) {}
 
-  async createChat(userId: string, title?: string): Promise<Chat> {
+  async createChat(authorization: string, title?: string): Promise<Chat> {
+    const payload = this.jwtService.decode(authorization);
     return this.chatRepository.save(Object.assign(new Chat(), {
         id: uuidv4(),
-        userId,
+        userId: payload['id'],
         title: title || null,
         status: ChatStatus.ENABLED,
         createdAt: new Date(),
@@ -23,7 +26,20 @@ export class ChatService {
       }));
   }
 
-  async getChatResponse(userId: string, id: string, prompt?: string): Promise<any> {
+  async getUserChatMsg(authorization: string, id: string): Promise<any> {
+    const payload = this.jwtService.decode(authorization);
+    if (!id) {
+      throw new Error('Chat ID is required');
+    }
+    const chat = await this.chatRepository.findOne({ where: { id, userId: payload['id'] } });
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    return chat.messages;
+  }
+
+  async getChatResponse(authorization: string, id: string, prompt: string): Promise<any> {
+    const payload = this.jwtService.decode(authorization);
     if (!id) {
       throw new Error('Chat ID is required');
     }
@@ -31,7 +47,7 @@ export class ChatService {
     const existingChat = await this.chatRepository.findOne({ 
       where: { 
         id,
-        userId
+        userId: payload['id']
       } 
     });
 
@@ -40,8 +56,8 @@ export class ChatService {
     }
 
     const openai = new OpenAI({
-      baseURL: 'https://integrate.api.nvidia.com/v1',
-      apiKey: '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'
+      baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
+      apiKey: 'faae1484-2203-4490-8719-c62e2ddeefe7'
     });
 
     const msgs: any[] = []
@@ -57,7 +73,7 @@ export class ChatService {
         content: prompt
       });
       const responseStream = await openai.chat.completions.create({
-        model: "deepseek-ai/deepseek-r1",
+        model: "ep-20250213193551-29xm2",
         temperature: 0.6,
         top_p: 0.7,
         max_tokens: 4096,
@@ -71,8 +87,10 @@ export class ChatService {
     }
   }
 
-  async addMessage(chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
-    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+  async addMessage(authorization: string, chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
+    // TODO: 添加限制，用户/system 不能连续添加msg
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
     if (!chat) {
       throw new Error('Chat not found');
     }
@@ -88,36 +106,33 @@ export class ChatService {
   }
 
   // 更新聊天状态
-  async updateChatStatus(chatId: string, status: ChatStatus): Promise<Chat> {
-    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+  async updateChatTitle(authorization: string, chatId: string, title: string): Promise<Chat> {
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
     if (!chat) {
       throw new Error('Chat not found');
     }
 
-    chat.status = status;
+    chat.title = title;
     return this.chatRepository.save(chat);
   }
 
-  // 软删除聊天
-  async deleteChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.DELETED);
-  }
-
-  // 禁用聊天
-  async disableChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.DISABLED);
-  }
-
-  // 启用聊天
-  async enableChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.ENABLED);
+  async deleteChat(authorization: string, chatId: string): Promise<void> {
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    chat.status = ChatStatus.DELETED;
+    await this.chatRepository.save(chat);
   }
 
   // 获取用户的会话列表
-  async getUserChats(userId: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
+  async getUserChats(authorization: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
+    const payload = this.jwtService.decode(authorization);
     const chats = await this.chatRepository.find({
       where: {
-        userId,
+        userId: payload['id'],
         status: ChatStatus.ENABLED,
       },
       order: {
