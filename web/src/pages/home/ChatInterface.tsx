@@ -45,7 +45,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ prompt, children }) => {
     }
   }
   return (
-    <div className="w-[100%] h-[100%] bg-[#ccc]">
+    <div className="w-[100%] h-[100%]">
       <div className={chatInterfaceClass}>
         {/* 预存选择模型 */}
         {/* <div>标头</div> */}
