@@ -88,6 +88,7 @@ export class ChatService {
   }
 
   async addMessage(authorization: string, chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
+    // TODO: 添加限制，用户/system 不能连续添加msg
     const payload = this.jwtService.decode(authorization);
     const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
     if (!chat) {
@@ -105,29 +106,15 @@ export class ChatService {
   }
 
   // 更新聊天状态
-  async updateChatStatus(chatId: string, status: ChatStatus): Promise<Chat> {
-    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+  async updateChatTitle(authorization: string, chatId: string, title: string): Promise<Chat> {
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
     if (!chat) {
       throw new Error('Chat not found');
     }
 
-    chat.status = status;
+    chat.title = title;
     return this.chatRepository.save(chat);
-  }
-
-  // 软删除聊天
-  async deleteChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.DELETED);
-  }
-
-  // 禁用聊天
-  async disableChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.DISABLED);
-  }
-
-  // 启用聊天
-  async enableChat(chatId: string): Promise<Chat> {
-    return this.updateChatStatus(chatId, ChatStatus.ENABLED);
   }
 
   // 获取用户的会话列表

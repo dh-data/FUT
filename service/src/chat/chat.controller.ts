@@ -1,4 +1,4 @@
-import { Controller, Post, Headers, Get, Body, Res, Param } from '@nestjs/common';
+import { Controller, Post, Headers, Get, Body, Res, Param, Put } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Chat } from './chat.entity';
 import { Response } from 'express';
@@ -85,9 +85,12 @@ export class ChatController {
    * @param body - 消息内容
    * @returns void
    */
-  @Post(':chat_id')
+  @Put(':chat_id')
   @ApiOperation({ summary: '添加会话消息（用于流式消息返回结束后，记录本条对话消息）' })
   async addChatMessage(@Headers('authorization') authorization: string, @Param('chat_id') chat_id: string, @Body() body: RecordMsgDto): Promise<void> {
     this.chatService.addMessage(authorization, chat_id, body.content, 'system');
+    if (body.title) {
+      this.chatService.updateChatTitle(authorization, chat_id, body.title);
+    }
   }
 }
