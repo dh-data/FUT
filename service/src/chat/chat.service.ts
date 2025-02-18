@@ -4,18 +4,21 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat, Message, ChatStatus } from './chat.entity';
 import { OpenAI } from 'openai';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Chat)
     private chatRepository: Repository<Chat>,
+    private jwtService: JwtService
   ) {}
 
-  async createChat(userId: string, title?: string): Promise<Chat> {
+  async createChat(authorization: string, title?: string): Promise<Chat> {
+    const payload = this.jwtService.decode(authorization);
     return this.chatRepository.save(Object.assign(new Chat(), {
         id: uuidv4(),
-        userId,
+        userId: payload['id'],
         title: title || null,
         status: ChatStatus.ENABLED,
         createdAt: new Date(),
@@ -23,7 +26,20 @@ export class ChatService {
       }));
   }
 
-  async getChatResponse(userId: string, id: string, prompt?: string): Promise<any> {
+  async getUserChatMsg(authorization: string, id: string): Promise<any> {
+    const payload = this.jwtService.decode(authorization);
+    if (!id) {
+      throw new Error('Chat ID is required');
+    }
+    const chat = await this.chatRepository.findOne({ where: { id, userId: payload['id'] } });
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    return chat.messages;
+  }
+
+  async getChatResponse(authorization: string, id: string, prompt: string): Promise<any> {
+    const payload = this.jwtService.decode(authorization);
     if (!id) {
       throw new Error('Chat ID is required');
     }
@@ -31,7 +47,7 @@ export class ChatService {
     const existingChat = await this.chatRepository.findOne({ 
       where: { 
         id,
-        userId
+        userId: payload['id']
       } 
     });
 
@@ -71,8 +87,9 @@ export class ChatService {
     }
   }
 
-  async addMessage(chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
-    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+  async addMessage(authorization: string, chatId: string, content: string, role: 'user' | 'assistant' | 'system'): Promise<Chat> {
+    const payload = this.jwtService.decode(authorization);
+    const chat = await this.chatRepository.findOne({ where: { id: chatId, userId: payload['id'] } });
     if (!chat) {
       throw new Error('Chat not found');
     }
@@ -114,10 +131,11 @@ export class ChatService {
   }
 
   // 获取用户的会话列表
-  async getUserChats(userId: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
+  async getUserChats(authorization: string): Promise<(Omit<Chat, 'createdAt'>)[]> {
+    const payload = this.jwtService.decode(authorization);
     const chats = await this.chatRepository.find({
       where: {
-        userId,
+        userId: payload['id'],
         status: ChatStatus.ENABLED,
       },
       order: {

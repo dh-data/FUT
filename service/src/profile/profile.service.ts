@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Headers } from '@nestjs/common';
 
 @Injectable()
 export class ProfileService {
   constructor(private jwtService: JwtService) {}
-  getProfile(@Headers('authorization') authorization: string): string {
+  getProfile(authorization: string): any {
     const payload = this.jwtService.decode(authorization);
-    console.log('payload', payload);
-    return payload;
+    // console.log('authorization', payload);
+    return {
+      id: payload['id'],
+      full_name: payload['full_name'],
+      email: payload['email']
+    };
   }
 }
