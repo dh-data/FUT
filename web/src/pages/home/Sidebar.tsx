@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { getUserChatList } from '@/api/chat' // 导入封装的 axios 实例
-import { Ellipsis } from 'lucide-react'
+import { getUserChatList, deleteChat } from '@/api/chat' // 导入封装的 axios 实例
+import { Ellipsis, PanelRightClose, PanelRightClose } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx' // 引入 clsx 来简化动态样式绑定
@@ -151,7 +151,13 @@ const SidebarComponent = () => {
   // 删除数据
   const handleDeleteData = id => {
     console.log(id, '>>>删除')
-    // setDataSource(dataSource.filter((item)=>item.id!=id))
+    deleteChat(id)
+      .then(res => {
+        alert('删除成功')
+      })
+      .catch(e => {
+        console.log(e, '>>>删除失败')
+      })
   }
 
   // 提取工具提示组件

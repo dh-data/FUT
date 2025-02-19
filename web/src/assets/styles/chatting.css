@@ -41,13 +41,13 @@
 .message.user .content {
   background-color: #2d65f7;
   color: white;
-  border-radius: 12px 12px 0 12px;
+  border-radius: 12px;
 }
 
 .message.assistant .content {
   background-color: #e9ecef;
   color: #333;
-  border-radius: 12px 12px 12px 0;
+  border-radius: 12px;
   white-space: pre-wrap;
   overflow: hidden;
   width: 100%;
@@ -82,4 +82,65 @@
     typing 3.5s steps(40, end),
     blink-caret 0.75s step-end infinite;
   border-right: 2px solid #333;
+}
+
+.user-content {
+  max-width: calc(100% - 60px);
+}
+.message.user {
+  position: relative;
+}
+.user-action {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  opacity: 0;
+  position: absolute;
+  top: 5px;
+  left: -30px;
+}
+
+.message.user:not(.edit-message):hover .user-action {
+  opacity: 1;
+}
+
+.action-icon {
+  margin-right: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.edit-message {
+  width: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+}
+.edit-message button {
+  height: 34px;
+  width: 56px;
+  border-radius: 14px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+button,
+button:hover,
+button:focus,
+button:focus-visible {
+  border: none !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+.button-cancel {
+  background: #ededed;
+}
+.button-save {
+  background: #4d6bfe;
+  color: #fff;
+}
+
+.edit-message textarea {
+  border: 2px solid #4d6bfe;
 }
