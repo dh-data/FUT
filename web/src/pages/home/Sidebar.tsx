@@ -6,9 +6,7 @@ import {
   Trash2,
   MessageCircle,
   LogOut,
-  PanelRightClose,
-  PanelRightClose
-,ChevronLeft, ChevronRight } from 'lucide-react'  // 引入图标
+  PanelRightClose,ChevronLeft, ChevronRight } from 'lucide-react'  // 引入图标
 import { Input } from '@/components/ui/input'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx' // 引入 clsx 来简化动态样式绑定
