@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { getChatList } from '@/api/chat' // 导入封装的 axios 实例
+import { getUserChatList } from '@/api/chat' // 导入封装的 axios 实例
 import { Ellipsis } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -42,15 +42,14 @@ const SidebarComponent = () => {
 
   useEffect(() => {
     // 替换为你的 API 端点
-    getChatList()
-      .then(data => {
+    getUserChatList()
+      .then(({ data }) => {
+        // setDataSource({ ...dataSource, ...data })
         console.log(data, '<<<')
       })
-      .catch(err => {})
-    // fetch('https://api.example.com/sidebar-data')
-    //   .then(response => response.json())
-    //   .then(data => setData(data))
-    //   .catch(error => console.error('Error fetching data:', error));
+      .catch(err => {
+        console.error('Error fetching data:', err)
+      })
   }, [])
   // 数据集合
   const [dataSource, setDataSource] = useState([
