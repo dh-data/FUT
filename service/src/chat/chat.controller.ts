@@ -1,4 +1,4 @@
-import { Controller, Post, Headers, Get, Body, Res, Param } from '@nestjs/common';
+import { Controller, Post, Headers, Get, Body, Res, Param, Put, Delete } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Chat } from './chat.entity';
 import { Response } from 'express';
@@ -49,6 +49,7 @@ export class ChatController {
       try {
         const responseStream = await this.chatService.getChatResponse(authorization, id, body.prompt);
         response.setHeader('Content-Type', 'text/event-stream');
+        response.status(200);
 
         for await (const chunk of responseStream) {
           console.log(chunk.choices[0].delta);
@@ -85,9 +86,24 @@ export class ChatController {
    * @param body - 消息内容
    * @returns void
    */
-  @Post(':chat_id')
-  @ApiOperation({ summary: '添加会话消息（用于流式消息返回结束后，记录本条对话消息）' })
+  @Put(':chat_id')
+  @ApiOperation({ summary: '更新会话信息（记录系统对话消息<流式返回结束后>/修改会话标题）' })
   async addChatMessage(@Headers('authorization') authorization: string, @Param('chat_id') chat_id: string, @Body() body: RecordMsgDto): Promise<void> {
     this.chatService.addMessage(authorization, chat_id, body.content, 'system');
+    if (body.title) {
+      this.chatService.updateChatTitle(authorization, chat_id, body.title);
+    }
+  }
+
+  /**
+   * 删除会话
+   * @param authorization - 用户的授权信息
+   * @param chat_id - chatID
+   * @returns void
+   */
+  @Delete(':chat_id')
+  @ApiOperation({ summary: '删除会话' })
+  async deleteChat(@Headers('authorization') authorization: string, @Param('chat_id') chat_id: string): Promise<void> {
+    this.chatService.deleteChat(authorization, chat_id);
   }
 }

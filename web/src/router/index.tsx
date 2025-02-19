@@ -31,7 +31,6 @@ export const routes: RouteObject[] = [
         path: '/chat/empty',
         element: <WaitChat />
       },
-      // 动态路由
       {
         path: '/chat/:id?',
         element: <Chatting />

@@ -11,6 +11,9 @@ export class ChatParamDto {
 }
 
 export class RecordMsgDto {
+    @ApiProperty({ required: false })
+    title?: string;
+
     @ApiProperty({ required: true })
     content: string;
 }
