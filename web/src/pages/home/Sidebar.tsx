@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Ellipsis, Settings, Trash2, MessageCircle, LogOut } from 'lucide-react'
+import { getUserChatList } from '@/api/chat' // 导入封装的 axios 实例
 import { Input } from '@/components/ui/input'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx' // 引入 clsx 来简化动态样式绑定
