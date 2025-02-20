@@ -49,6 +49,9 @@ import { Value } from '@radix-ui/react-select'
 
 //   样式
 const triggerClass = 'cursor-pointer hover:bg-[#ccc] rounded-[12px]'
+const TooltipContentClass = ' bg-black text-white'  // 提示文本的样式
+const userInfoIcon  = 'https://picsum.photos/200' // 用户头像 (个人信息图标)
+const projectIcon  = 'https://picsum.photos/200' // 产品logo (产品图标)
 const dataItemClass =
   'relative pl-[10px] pr-[10px] hover:bg-[var(--bg-color-hover)] rounded-[12px] cursor-pointer'
 const ellipsisClass =
@@ -70,6 +73,11 @@ const SidebarComponent = () => {
   const [isSticky, setIsSticky] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
 
+  // 处理侧边栏，收起状态，logo点击
+  const handleTitleClick = () => {
+    setIsCollapsed(false); // 点击标题时展开侧边栏
+  };
+
   useEffect(() => {
     // 替换为你的 API 端点
     getUserChatList()
@@ -90,7 +98,7 @@ const SidebarComponent = () => {
       children: [
         {
           id: 11,
-          title: '标题'
+          title: '标题fffffffffffffffffff标题fffffffffffffffffff标题fffffffffffffffffff标题fffffffffffffffffff'
         },
         {
           id: 12,
@@ -405,15 +413,65 @@ const SidebarComponent = () => {
       isCollapsed ? "w-[60px]" : "w-[260px]"
       )}
       >
-         {/* 顶部标题和收起按钮 */}
-          <div className="flex justify-between pt-[24px] pr-[14px] pb-[24px] pl-[20px] ">
-              {!isCollapsed && <p>标题</p>}
-              <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-2 hover:bg-[var(--bg-color-hover)] rounded-full transition-colors"
-              >
-                {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-              </button>
+        {/* 顶部标题和收起按钮 */}
+          <div className="flex justify-between pt-[24px] pb-[24px] ">
+              {isCollapsed ? (
+                      // 收起状态：图标在上方
+                    <div className="flex flex-col items-center w-full gap-4">
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div 
+                                      onClick={handleTitleClick}
+                                      className="cursor-pointer hover:bg-[var(--bg-color-hover)] p-2 rounded-full"
+                                    >
+                                        <img 
+                                          src={projectIcon} 
+                                          alt="FUT" 
+                                          className="w-[24px] h-[24px]" 
+                                        />
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className={TooltipContentClass} >
+                                    <p>F.U.T</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => setIsCollapsed(!isCollapsed)}
+                                      className="p-2 hover:bg-[var(--bg-color-hover)] rounded-full transition-colors"
+                                    >
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className={TooltipContentClass} >
+                                    <p>展开边栏</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                  </div>
+              ) : (
+                    // 展开状态：标题和按钮在同一行
+                    <div className="flex justify-between items-center w-full">
+                          <p className="flex pr-[14px] pl-[20px]">F.U.T</p>
+                          <TooltipProvider>
+                              <Tooltip>
+                                  <TooltipTrigger asChild>
+                                      <button
+                                        onClick={() => setIsCollapsed(!isCollapsed)}
+                                        className="p-2 hover:bg-[var(--bg-color-hover)] rounded-full transition-colors"
+                                        >
+                                          <ChevronLeft size={20} />
+                                      </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="right" className={TooltipContentClass} >
+                                      <p>收起边栏</p>
+                                  </TooltipContent>
+                              </Tooltip>
+                          </TooltipProvider>
+                    </div>
+              )}
           </div>
 
           {/* 新对话按钮 */}
@@ -426,7 +484,7 @@ const SidebarComponent = () => {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <div className={clsx( "flex items-center cursor-pointer",
-                              isCollapsed ? "justify-center p-2" : chatBtnClass
+                              isCollapsed ? "justify-center p-2" : chatBtnClass 
                             )}
                           >
                             <img src={chatIcon} className={clsx("mr-[8px]", isCollapsed && "mr-0")} />
@@ -434,7 +492,7 @@ const SidebarComponent = () => {
                         </div>
                     </TooltipTrigger>
                       {isCollapsed && (
-                        <TooltipContent side="right">
+                        <TooltipContent side="right" className={TooltipContentClass}>
                           <p>开启新对话</p>
                         </TooltipContent>
                       )}
@@ -445,280 +503,260 @@ const SidebarComponent = () => {
           {/* 聊天列表 */}
           <div ref={containerRef}
               className={clsx(
-                "overflow-y-auto",
-                isCollapsed ? "px-[5px]" : "pl-[10px] pr-[8px]",
+                isCollapsed ? "px-[5px]" : "overflow-y-auto pl-[10px] pr-[8px] ",
                 "h-[calc(100vh-200px)]"
               )}
             >
-               {/* 滚动内容 */}
-               <div className="content-area">
-                  {dataSource.map(data => (
-                      <div key={data.day} className="pb-[10px] font-bold">
-                        {!isCollapsed && (
-                          <div  ref={el => {
-                                  if (el) headersRef.current[data.day] = el
-                                  else delete headersRef.current[data.day]
-                                }} 
-                                className={clsx(
-                                  'sticky-header bg-[#f9fbff] text-[#555] text-[14px]  z-10 transition-all',
-                                  activeHeader === data.day ? 'sticky top-0 shadow-md' // 使用sticky定位
-                                    : 'relative'
-                                )}
-                            >
-                              <div className="p-2">{data.day} 天</div>
-                          </div>
-                        )}
+                {/* 滚动内容 收起时隐藏*/}
+                { isCollapsed ? (<></>):(<>
+                    <div className="content-area">
+                        {dataSource.map(data => (
+                            <div key={data.day} className="pb-[10px] font-bold">
 
-                        {data.children.map(item => (
-                          <TooltipProvider key={item.id}>
-                              <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div onClick={() => handleSelData(item)}
-                                        className={clsx(
-                                          "group",
-                                          isCollapsed ? "h-[38px] w-[38px]" : "h-[38px]",
-                                          "leading-[38px]"
-                                        )}
-                                      >
-                                          {dropdownData.id === item.id ? (
-                                                <Input
-                                                  autoFocus
-                                                  onBlur={handleBlur}
-                                                  onChange={e => setEditingData(e.target.value)}
-                                                  value={dropdownData.title}
-                                                  className="rounded-[12px]"
-                                                />
-                                            ) : (
-                                                  <div className={clsx(
-                                                      dataItemClass,
-                                                      item.id === selectedId && 'bg-[var(--bg-color-hover)]'
-                                                    )}
-                                                  >
-                                                        {isCollapsed ? (
-                                                                  <div className="flex justify-center items-center h-full">
-                                                                    <MessageCircle size={20} />
-                                                                  </div>
-                                                          ) : (
-                                                            <>
+                                      <div  ref={el => {
+                                              if (el) headersRef.current[data.day] = el
+                                              else delete headersRef.current[data.day]
+                                            }} 
+                                            className={clsx(
+                                              'sticky-header bg-[#f9fbff] text-[#555] text-[14px]  z-10 transition-all',
+                                              activeHeader === data.day ? 'sticky top-0 shadow-md' // 使用sticky定位
+                                                : 'relative'
+                                            )}
+                                        >
+                                            <div className="p-2">{data.day} 天</div>
+                                      </div>
+
+                                    {data.children.map(item => (
+                                          <div onClick={() => handleSelData(item)}
+                                              className={clsx("group","h-[38px]","leading-[38px]")}
+                                            >
+                                                {dropdownData.id === item.id ? (
+                                                    // 编辑状态下不显示输入框
+                                                    !isCollapsed && (
+                                                        <Input
+                                                          autoFocus
+                                                          onBlur={handleBlur}
+                                                          onChange={e => setEditingData(e.target.value)}
+                                                          value={dropdownData.title}
+                                                          className="rounded-[12px]"
+                                                          />
+                                                    )
+                                                  ) : (
+                                                        <div className={clsx(
+                                                            dataItemClass,
+                                                            item.id === selectedId && 'bg-[var(--bg-color-hover)]'
+                                                          )}>
                                                                 {item.title.length > 13 ? (
+                                                                  // 标题过长时，只显示前13个字符
                                                                     <TooltipItem title={item.title} className="[&>div]:hover:bg-blue-100" />
                                                                   ) : (
                                                                     <div className="overflow-hidden h-[38px]">
-                                                                      {item.title} ccc
+                                                                      {item.title}
                                                                     </div>
                                                                 )}
                                                                 <DropdownMenuComponent item={item} handleEditStart={handleEditStart} handleDeleteData={handleDeleteData} />
-                                                            </>         
-                                                        )}
-                                                  </div>
-                                            )}
-                                      </div>
-                                  </TooltipTrigger>
-                                    {isCollapsed && (
-                                        <TooltipContent side="right">
-                                          <p>{item.title} 对话标题展示</p>
-                                        </TooltipContent>
-                                    )}
-                              </Tooltip>
-                          </TooltipProvider>
-                        ))}
-                      </div>
-                    ))}
-                </div>  {/* 滚动内容  结束div */}
-            
-             </div> {/* 聊天列表 结束div */}
+                                                        </div>
+                                                  )}
+                                          </div>
+                                      ))}
+                                  
+                              </div>
+                          ))}
+                      </div>  {/* 滚动内容  结束div */}
+                </>) }
+            </div> {/* 聊天列表 结束div */}
 
         {/*个人信息*/}
-        <div className={clsx(
-          'transition-all duration-300',
-          isCollapsed ? 'mx-[5px]' : 'ml-[10px] mr-[10px]'
-        )}>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                      <div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="w-full " asChild>
-                                <div className={clsx(
-                                    'cursor-pointer p-[10px] outline-none rounded-[12px] hover:bg-[var(--bg-color-hover)] flex items-center',
-                                    isCollapsed && 'justify-center'
-                                )}>
-                                      <div>
-                                          <img src="https://picsum.photos/200"  className='w-[32px] h-[32px] rounded-full ' /> 
+          <div className={clsx(
+            'transition-all duration-300',
+            isCollapsed ? 'mx-[5px]' : 'ml-[10px] mr-[10px]'
+          )}>
+              <div>
+                <DropdownMenu>
+                      <TooltipProvider>
+                          <Tooltip>
+                              <TooltipTrigger asChild>
+                                  <DropdownMenuTrigger className="w-full " asChild>
+                                      <div className={clsx(
+                                          'cursor-pointer p-[10px] outline-none rounded-[12px] hover:bg-[var(--bg-color-hover)] flex items-center',
+                                          isCollapsed && 'justify-center'
+                                      )}>
+                                            <div>
+                                                <img src={userInfoIcon}  className='w-[32px] h-[32px] rounded-full ' /> 
+                                            </div>
+                                            {/* <UserButton /> 如果使用Clerk的UserButton，也可以用自定义头像组件 */}
+                                            {!isCollapsed && <span className="ml-2">个人信息</span>}
                                       </div>
-                                      {/* <UserButton /> 如果使用Clerk的UserButton，也可以用自定义头像组件 */}
-                                      {!isCollapsed && <span className="ml-2">个人信息</span>}
-                                </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[200px] bg-white border-0">
-                                  {userInfoDropdownMenuItems.map((item, index) => (
-                                      <React.Fragment key={item.id}>
-                                        <DropdownMenuItem 
-                                          className={userInfoDropdownMenuClass}
-                                          onClick={() => handleMenuClick(item)}
-                                        >
-                                          <item.icon size={16} />
-                                          <span>{item.text}</span>
-                                        </DropdownMenuItem>
-                                        {/* 在退出登录前添加分隔线 */}
-                                        {item.id === 'contact' && <DropdownMenuSeparator />}
-                                      </React.Fragment>
-                                  ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                      </div>  
-                </TooltipTrigger>
-                  {isCollapsed && (
-                      <TooltipContent side="right">
-                        <p>个人信息</p>
-                      </TooltipContent>
-                  )}
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+                                  </DropdownMenuTrigger>
+                              </TooltipTrigger>
+                                {isCollapsed && (
+                                    <TooltipContent side="right" className={TooltipContentClass}>
+                                      <p>个人信息</p>
+                                    </TooltipContent>
+                                )}
+                          </Tooltip>
+                      </TooltipProvider>
+                    <DropdownMenuContent className="w-[200px] bg-white border-0">
+                          {userInfoDropdownMenuItems.map((item, index) => (
+                              <React.Fragment key={item.id}>
+                                <DropdownMenuItem 
+                                  className={userInfoDropdownMenuClass}
+                                  onClick={() => handleMenuClick(item)}
+                                >
+                                  <item.icon size={16} />
+                                  <span>{item.text}</span>
+                                </DropdownMenuItem>
+                                {/* 在退出登录前添加分隔线 */}
+                                {item.id === 'contact' && <DropdownMenuSeparator />}
+                              </React.Fragment>
+                          ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+              </div>  
+          </div>
 
-      {/* 系统设置 弹窗面板  Dialog 组件*/}
-      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-      <DialogContent className="sm:max-w-[550px] bg-[#fff]">
-        <DialogHeader>
-            <DialogTitle>系统设置</DialogTitle>
-        </DialogHeader>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full h-12 grid grid-cols-2 bg-[#f5f5f5] rounded-lg flex items-center ">
-                {userInfoSettingsOpenItems.map((item, index) => (
-                  <React.Fragment key={item.id}>
-                      <TabsTrigger value={item.id}
-                        onClick={() => {
-                          // handlePopupClick(item); 
-                          setActiveTab(item.id)
-                        }}
-                        style={{
-                          backgroundColor: activeTab === item.id ? "white" : "transparent",
-                          color: activeTab === item.id ? "black" : "grey",
-                          borderRadius: "6",  // 圆角半径
-                          outline: "none",  // 移除黑色边框
-                          border: "none",    // 移除边框
-                          width: "100%",
-                          // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // 添加阴影
-                        }}
-                      >
-                          < span>{item.text}</span>
-                      </TabsTrigger>
-                    
-                  </React.Fragment>
-                ))}
-            </TabsList>
-          {/* 通用设置 */}
-            <TabsContent value="general" className="mt-4" 
-              style={{ border: "none", outline: "none", boxShadow: "none" }}
-              >
-              <div className="space-y-4 bg-while" >
-                  {userInfoSettingsOpenItems[0].items.map((item, index) => (
-                      <React.Fragment key={item.id}>
-                        <div className="h-14 flex items-center justify-between ">
-                              <span>{item.text}</span>
-                            {/* 下拉框 */}
-                              <Select defaultValue="system" > 
-                                {/* 默认展示选项 */}
-                                  <SelectTrigger className="w-[180px]" 
-                                    style={{backgroundColor:'#f5f5f5',color:'grey', border: "none", outline: "none" ,boxShadow: "none"}}
-                                  >
-                                      <SelectValue placeholder={item.SelectItems[0].id} />
-                                  </SelectTrigger>
-                                  {/* 下拉框内容 */}
-                                  <SelectContent className="p-1 bg-white rounded-md shadow-lg "
-                                    style={{backgroundColor:'#f5f5f5',color:'grey', border: "none", outline: "none" ,boxShadow: "none"}}
-                                    >
-                                        {item.SelectItems.map((selectItem) => (
-                                            <SelectItem value={selectItem.id} className='hover:bg-[var(--bg-color-hover)]'>
-                                              {selectItem.text}
-                                            </SelectItem>
-                                        ))}
-                                  </SelectContent>
-                              </Select>
-                        </div>
-                      </React.Fragment>
-                    ))}
-              </div>
-            </TabsContent>
-            {/* 账户信息 */}
-            <TabsContent
-              value="account"
-              className="mt-4"
-              style={{
-                border: "none",    // 移除边框
-                outline: "none",   // 移除轮廓
-                boxShadow: "none" // 移除阴影
-              }}>
-                <div className="space-y-4">
-                  {userInfoSettingsOpenItems[1].items.map((item, index) => (
-                      <React.Fragment key={item.id}>
-                        <div className="flex items-center justify-between h-14">
-                            <span>{item.text}</span>
-                          {/* 根据 item.style 判断渲染内容 */}
-                            {item.style === '按钮' ? (
-                                  <button
-                                    style={{
-                                      border: "none",    // 移除边框
-                                      outline: "none",   // 移除轮廓
-                                      boxShadow: "none", // 移除阴影
-                                      backgroundColor:
-                                        item.id === 'cancelAccount' // 判断是否为注销账号按钮
-                                          ? hovered === item.text
-                                            ? '#E56363' // 注销账号按钮悬停时的背景色
-                                            : '#ff4d4f' // 注销账号按钮默认背景色
-                                          : hovered === item.text
-                                          ? '#e4e4e7' // 其他按钮悬停时的背景色
-                                          : 'white',  // 其他按钮默认背景色
-                                      color:
-                                        item.id === 'cancelAccount' // 判断是否为注销账号按钮
-                                          ? 'white' // 注销账号按钮文字颜色
-                                          : hovered === item.text
-                                          ? 'black' // 其他按钮悬停时的文字颜色
-                                          : 'grey', // 其他按钮默认文字颜色
-                                      transition: 'background-color 0.3s ease', // 背景色过渡效果
-                                      padding: '8px 16px', // 内边距
-                                      borderRadius: '4px', // 圆角
-                                      cursor: 'pointer',   // 鼠标悬停时显示手型
-                                    }}
-                                    onMouseEnter={() => setHovered(item.text)}
-                                    onMouseLeave={() => setHovered('null')}
-                                    onClick={() => {
-                                      // 根据 item.id 处理不同的按钮点击逻辑
-                                      switch (item.id) {
-                                        case 'userAgreement':
-                                          window.open(item.SelectItems[0].text, '_blank'); // 打开用户协议链接
-                                          break;
-                                        case 'privacyPolicy':
-                                          window.open(item.SelectItems[0].text, '_blank'); // 打开隐私政策链接
-                                          break;
-                                        case 'cancelAccount':
-                                          // 处理注销账号逻辑
-                                          console.log('注销账号');
-                                          break;
-                                        default:
-                                          break;
-                                      }
-                                    }}
-                                  >
-                                      {item.id === 'cancelAccount' ? '注销' : '查看'} {/* 注销账号按钮显示“注销”，其他按钮显示“查看” */}
-                                  </button>
-                            ) : (
-                                  // 如果是文本类型，直接显示 SelectItems 的内容
-                                  <span>{item.SelectItems[0].text}</span>
-                            )}
-                        </div>
-                        {/* 添加分隔线（可选） */}
-                          {index < userInfoSettingsOpenItems[1].items.length - 1 && (
-                            <hr className="my-2 border-gray-200" />
-                          )}
-                      </React.Fragment>
-                    ))}
-                </div>
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
+          {/* 系统设置 弹窗面板  Dialog 组件*/}
+          <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+            <DialogContent className="sm:max-w-[550px] bg-[#fff]">
+              <DialogHeader>
+                  <DialogTitle>系统设置</DialogTitle>
+              </DialogHeader>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="w-full h-12 grid grid-cols-2 bg-[#f5f5f5] rounded-lg flex items-center ">
+                      {userInfoSettingsOpenItems.map((item, index) => (
+                        <React.Fragment key={item.id}>
+                            <TabsTrigger value={item.id}
+                              onClick={() => {
+                                // handlePopupClick(item); 
+                                setActiveTab(item.id)
+                              }}
+                              style={{
+                                backgroundColor: activeTab === item.id ? "white" : "transparent",
+                                color: activeTab === item.id ? "black" : "grey",
+                                borderRadius: "6",  // 圆角半径
+                                outline: "none",  // 移除黑色边框
+                                border: "none",    // 移除边框
+                                width: "100%",
+                                // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // 添加阴影
+                              }}
+                            >
+                                < span>{item.text}</span>
+                            </TabsTrigger>
+                          
+                        </React.Fragment>
+                      ))}
+                  </TabsList>
+                {/* 通用设置 */}
+                  <TabsContent value="general" className="mt-4" 
+                    style={{ border: "none", outline: "none", boxShadow: "none" }}
+                    >
+                    <div className="space-y-4 bg-while" >
+                        {userInfoSettingsOpenItems[0].items.map((item, index) => (
+                            <React.Fragment key={item.id}>
+                              <div className="h-14 flex items-center justify-between ">
+                                    <span>{item.text}</span>
+                                  {/* 下拉框 */}
+                                    <Select defaultValue="system" > 
+                                      {/* 默认展示选项 */}
+                                        <SelectTrigger className="w-[180px]" 
+                                          style={{backgroundColor:'#f5f5f5',color:'grey', border: "none", outline: "none" ,boxShadow: "none"}}
+                                        >
+                                            <SelectValue placeholder={item.SelectItems[0].id} />
+                                        </SelectTrigger>
+                                        {/* 下拉框内容 */}
+                                        <SelectContent className="p-1 bg-white rounded-md shadow-lg "
+                                          style={{backgroundColor:'#f5f5f5',color:'grey', border: "none", outline: "none" ,boxShadow: "none"}}
+                                          >
+                                              {item.SelectItems.map((selectItem) => (
+                                                  <SelectItem value={selectItem.id} className='hover:bg-[var(--bg-color-hover)]'>
+                                                    {selectItem.text}
+                                                  </SelectItem>
+                                              ))}
+                                        </SelectContent>
+                                    </Select>
+                              </div>
+                            </React.Fragment>
+                          ))}
+                    </div>
+                  </TabsContent>
+                  {/* 账户信息 */}
+                  <TabsContent
+                    value="account"
+                    className="mt-4"
+                    style={{
+                      border: "none",    // 移除边框
+                      outline: "none",   // 移除轮廓
+                      boxShadow: "none" // 移除阴影
+                    }}>
+                      <div className="space-y-4">
+                        {userInfoSettingsOpenItems[1].items.map((item, index) => (
+                            <React.Fragment key={item.id}>
+                              <div className="flex items-center justify-between h-14">
+                                  <span>{item.text}</span>
+                                {/* 根据 item.style 判断渲染内容 */}
+                                  {item.style === '按钮' ? (
+                                        <button
+                                          style={{
+                                            border: "none",    // 移除边框
+                                            outline: "none",   // 移除轮廓
+                                            boxShadow: "none", // 移除阴影
+                                            backgroundColor:
+                                              item.id === 'cancelAccount' // 判断是否为注销账号按钮
+                                                ? hovered === item.text
+                                                  ? '#E56363' // 注销账号按钮悬停时的背景色
+                                                  : '#ff4d4f' // 注销账号按钮默认背景色
+                                                : hovered === item.text
+                                                ? '#e4e4e7' // 其他按钮悬停时的背景色
+                                                : 'white',  // 其他按钮默认背景色
+                                            color:
+                                              item.id === 'cancelAccount' // 判断是否为注销账号按钮
+                                                ? 'white' // 注销账号按钮文字颜色
+                                                : hovered === item.text
+                                                ? 'black' // 其他按钮悬停时的文字颜色
+                                                : 'grey', // 其他按钮默认文字颜色
+                                            transition: 'background-color 0.3s ease', // 背景色过渡效果
+                                            padding: '8px 16px', // 内边距
+                                            borderRadius: '4px', // 圆角
+                                            cursor: 'pointer',   // 鼠标悬停时显示手型
+                                          }}
+                                          onMouseEnter={() => setHovered(item.text)}
+                                          onMouseLeave={() => setHovered('null')}
+                                          onClick={() => {
+                                            // 根据 item.id 处理不同的按钮点击逻辑
+                                            switch (item.id) {
+                                              case 'userAgreement':
+                                                window.open(item.SelectItems[0].text, '_blank'); // 打开用户协议链接
+                                                break;
+                                              case 'privacyPolicy':
+                                                window.open(item.SelectItems[0].text, '_blank'); // 打开隐私政策链接
+                                                break;
+                                              case 'cancelAccount':
+                                                // 处理注销账号逻辑
+                                                console.log('注销账号');
+                                                break;
+                                              default:
+                                                break;
+                                            }
+                                          }}
+                                        >
+                                            {item.id === 'cancelAccount' ? '注销' : '查看'} {/* 注销账号按钮显示“注销”，其他按钮显示“查看” */}
+                                        </button>
+                                  ) : (
+                                        // 如果是文本类型，直接显示 SelectItems 的内容
+                                        <span>{item.SelectItems[0].text}</span>
+                                  )}
+                              </div>
+                              {/* 添加分隔线（可选） */}
+                                {index < userInfoSettingsOpenItems[1].items.length - 1 && (
+                                  <hr className="my-2 border-gray-200" />
+                                )}
+                            </React.Fragment>
+                          ))}
+                      </div>
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+          </Dialog>
 
         {/* 删除对话 弹窗面板 */}
           <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
