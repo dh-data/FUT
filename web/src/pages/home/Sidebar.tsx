@@ -6,7 +6,7 @@ import {
   Trash2,
   MessageCircle,
   LogOut,
-  PanelRightClose,ChevronLeft, ChevronRight } from 'lucide-react'  // 引入图标
+  PanelRightClose, PanelRightOpen} from 'lucide-react'  // 引入图标
 import { Input } from '@/components/ui/input'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx' // 引入 clsx 来简化动态样式绑定
@@ -442,7 +442,7 @@ const SidebarComponent = () => {
                                       onClick={() => setIsCollapsed(!isCollapsed)}
                                       className="p-2 hover:bg-[var(--bg-color-hover)] rounded-full transition-colors"
                                     >
-                                        <ChevronRight size={20} />
+                                        <PanelRightClose size={20} />
                                     </button>
                                 </TooltipTrigger>
                                 <TooltipContent side="right" className={TooltipContentClass} >
@@ -462,7 +462,7 @@ const SidebarComponent = () => {
                                         onClick={() => setIsCollapsed(!isCollapsed)}
                                         className="p-2 hover:bg-[var(--bg-color-hover)] rounded-full transition-colors"
                                         >
-                                          <ChevronLeft size={20} />
+                                          <PanelRightOpen size={20} />
                                       </button>
                                   </TooltipTrigger>
                                   <TooltipContent side="right" className={TooltipContentClass} >
