@@ -13,6 +13,8 @@ const Login = lazy(() => import('@/pages/login'))
 const Home = lazy(() => import('@/pages/home'))
 const WaitChat = lazy(() => import('@/pages/home/WaitChat'))
 const Chatting = lazy(() => import('@/pages/home/Chatting'))
+const TodoList = lazy(() => import('@/pages/todo'))
+const TodoDetail = lazy(() => import('@/pages/todo/TodoDetail'))
 // 加载提示组件
 const LoadingComponent = () => <div>加载中...</div>
 
@@ -42,6 +44,16 @@ export const routes: RouteObject[] = [
       {
         path: '*',
         element: <div>页面不存在</div>
+      }
+    ]
+  },
+  {
+    path: '/todo',
+    element: <TodoList />,
+    children: [
+      {
+        path: ':id?',
+        element: <TodoDetail />
       }
     ]
   },

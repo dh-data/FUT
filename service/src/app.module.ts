@@ -6,15 +6,21 @@ import { AuthMiddleware } from './middleware/auth';
 import { ChatModule } from './chat/chat.module';
 import { databaseConfig } from './chat/config/database.config';
 import { Chat } from './chat/chat.entity';
+import { Todo } from './todo/entities/todo.entity';
 import { ProfileModule } from './profile/profile.module';
 import { JwtService } from '@nestjs/jwt';
+import { TodoModule } from './todo/todo.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(databaseConfig),
-    TypeOrmModule.forFeature([Chat]),
+    TypeOrmModule.forRoot({
+      ...databaseConfig,
+      entities: [Chat, Todo],
+      autoLoadEntities: true,
+    }),
     ChatModule,
-    ProfileModule
+    ProfileModule,
+    TodoModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

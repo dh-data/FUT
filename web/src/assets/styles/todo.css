@@ -1,0 +1,27 @@
+.todo-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.todo-content h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+.todo-content h2 {
+  font-size: 1.5em;
+  margin: 1em 0;
+}
+
+.todo-content ul {
+  list-style-type: disc;
+  margin-left: 1.5em;
+}
+
+.todo-content pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+} 

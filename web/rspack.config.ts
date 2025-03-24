@@ -25,7 +25,15 @@ export default defineConfig({
       rewrites: [{ from: /^\/chat/, to: '/index.html' }]
     },
     hot: true,
-    port: 3000
+    port: 3000,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://10.168.1.77:6000',
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' }
+      }
+    ]
   },
   module: {
     rules: [
