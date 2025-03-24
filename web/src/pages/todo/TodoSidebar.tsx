@@ -34,6 +34,13 @@ const TodoSidebar = () => {
     fetchTodos()
   }, [])
 
+  useEffect(() => {
+    // 当 id 变为 undefined 时（删除后跳转到 /todo），重新获取列表
+    if (!id) {
+      fetchTodos()
+    }
+  }, [id])
+
   const handleTodoClick = (id: string) => {
     navigate(`/todo/${id}`)
   }

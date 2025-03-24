@@ -6,7 +6,19 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { getTodoDetail, updateTodo, TodoItem } from '@/api/todo'
+import { getTodoDetail, updateTodo, deleteTodo, TodoItem } from '@/api/todo'
+import { Trash2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../components/ui/alert-dialog"
 
 const TodoDetail = () => {
   const { id } = useParams()
@@ -48,6 +60,19 @@ const TodoDetail = () => {
     }
   }
 
+  const handleDelete = async () => {
+    if (!id) return
+    try {
+      setLoading(true)
+      await deleteTodo(id)
+      navigate('/todo')
+    } catch (error) {
+      console.error('删除待办失败:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -77,7 +102,7 @@ const TodoDetail = () => {
           ) : (
             <h1 className="text-xl font-bold dark:text-white">{todo.title}</h1>
           )}
-          <div className="space-x-2">
+          <div className="flex items-center gap-2">
             <Button
               variant={isEditing ? "default" : "outline"}
               onClick={() => isEditing ? handleSave() : setIsEditing(true)}
@@ -86,6 +111,35 @@ const TodoDetail = () => {
             >
               {isEditing ? '保存' : '编辑'}
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                  disabled={loading}
+                >
+                  <Trash2 className="h-5 w-5" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>确认删除</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    此操作将永久删除该待办事项，确定要继续吗？
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>取消</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    删除
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
