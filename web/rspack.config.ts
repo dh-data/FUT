@@ -21,15 +21,24 @@ export default defineConfig({
   // 添加 devServer 配置
   devServer: {
     historyApiFallback: {
-      index: '/index.html',
-      rewrites: [{ from: /^\/chat/, to: '/index.html' }]
+      index: '/',
+      rewrites: [
+        { 
+          from: /^\/todo\/.*/, 
+          to: '/' 
+        },
+        {
+          from: /^\/chat\/.*/, 
+          to: '/' 
+        }
+      ]
     },
     hot: true,
     port: 3000,
     proxy: [
       {
         context: ['/api'],
-        target: 'http://10.168.1.77:6000',
+        target: 'http://10.168.1.77:2000',
         changeOrigin: true,
         pathRewrite: { '^/api': '' }
       }
@@ -88,5 +97,8 @@ export default defineConfig({
   },
   experiments: {
     css: true
+  },
+  output: {
+    publicPath: '/'
   }
 })

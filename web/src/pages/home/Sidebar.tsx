@@ -518,7 +518,7 @@ const SidebarComponent = () => {
                                               else delete headersRef.current[data.day]
                                             }} 
                                             className={clsx(
-                                              'sticky-header bg-[#f9fbff] text-[#555] text-[14px]  z-10 transition-all',
+                                              'sticky-header bg-[#f9fbff] text-[#aaa] text-[14px]  z-10 transition-all',
                                               activeHeader === data.day ? 'sticky top-0 shadow-md' // 使用sticky定位
                                                 : 'relative'
                                             )}
@@ -550,7 +550,7 @@ const SidebarComponent = () => {
                                                                   // 标题过长时，只显示前13个字符
                                                                     <TooltipItem title={item.title} className="[&>div]:hover:bg-blue-100" />
                                                                   ) : (
-                                                                    <div className="overflow-hidden h-[38px]">
+                                                                    <div className="overflow-hidden h-[38px] text-[#555]">
                                                                       {item.title}
                                                                     </div>
                                                                 )}

@@ -50,7 +50,7 @@ export const updateTodo = (
   id: string,
   params: Partial<TodoItem>
 ): Promise<AxiosResponse<TodoItem>> => {
-  return axios.put(`/todos/${id}`, params)
+  return axios.patch(`/todos/${id}`, params)
 }
 
 /**

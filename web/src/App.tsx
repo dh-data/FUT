@@ -24,11 +24,17 @@
 // }
 
 import React from 'react'
-import Router from './router/index'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import Router from '@/router'
+import './App.css'
 import './index.css'
 
 const App: React.FC = () => {
-  return <Router />
+  return (
+    <ThemeProvider>
+      <Router />
+    </ThemeProvider>
+  )
 }
 
 export default App
